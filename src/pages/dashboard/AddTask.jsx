@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
-
-// Mock API URL (replace with your backend API)
-const API_URL = "https://your-backend-api.com/tasks";
+import AddTaskForm from "./AddTaskForm";
+ // Import the new AddTaskForm component
 
 const AddTask = () => {
   const [tasks, setTasks] = useState({
     todo: [],
     inProgress: [],
     done: [],
-  });
-
-  const [newTask, setNewTask] = useState({
-    title: "",
-    description: "",
-    category: "todo",
-    dueDate: "",
   });
 
   const [activityLog, setActivityLog] = useState([]);
@@ -28,7 +20,7 @@ const AddTask = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get("http://localhost:5000/task");
       const tasks = response.data;
 
       // Organize tasks by category
@@ -44,48 +36,24 @@ const AddTask = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewTask({ ...newTask, [name]: value });
-  };
 
-  const handleAddTask = async () => {
-    if (!newTask.title) {
-      alert("Title is required!");
-      return;
-    }
+  // Update local state
+  const handleTaskAdded = (task) => {
+    setTasks((prevTasks) => ({
+      ...prevTasks,
+      [task.category]: [...prevTasks[task.category], task],
+    }));
 
-    const task = {
-      ...newTask,
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      // Save task to the database
-      await axios.post(API_URL, task);
-
-      // Update local state
-      setTasks((prevTasks) => ({
-        ...prevTasks,
-        [task.category]: [...prevTasks[task.category], task],
-      }));
-
-      // Add to activity log
-      setActivityLog((prevLog) => [
-        ...prevLog,
-        `Task "${task.title}" added to ${task.category}.`,
-      ]);
-
-      // Reset form
-      setNewTask({ title: "", description: "", category: "todo", dueDate: "" });
-    } catch (error) {
-      console.error("Error adding task:", error);
-    }
+    // Add to activity log
+    setActivityLog((prevLog) => [
+      ...prevLog,
+      `Task "${task.title}" added to ${task.category}.`,
+    ]);
   };
 
   const handleDeleteTask = async (taskId, category) => {
     try {
+        
       // Delete task from the database
       await axios.delete(`${API_URL}/${taskId}`);
 
@@ -118,8 +86,9 @@ const AddTask = () => {
 
     // If the task is moved to a different category
     if (sourceCategory !== destinationCategory) {
+
       // Update task category in the database
-      await axios.patch(`${API_URL}/${task.id}`, {
+      await axios.patch(`http://localhost:5000/patchTask/${task.id}`, {
         category: destinationCategory,
       });
 
@@ -166,54 +135,9 @@ const AddTask = () => {
   };
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-8">Task Management System</h1>
-
+    <div className="bg-gray-100 md:my-10 my-5 p-4 min-h-screen">
       {/* Add Task Form */}
-      <div className="mb-8">
-        <input
-          type="text"
-          name="title"
-          placeholder="Task Title"
-          value={newTask.title}
-          onChange={handleInputChange}
-          className="p-2 border rounded-lg mr-2"
-          maxLength={50}
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Task Description"
-          value={newTask.description}
-          onChange={handleInputChange}
-          className="p-2 border rounded-lg mr-2"
-          maxLength={200}
-        />
-        <input
-          type="date"
-          name="dueDate"
-          value={newTask.dueDate}
-          onChange={handleInputChange}
-          className="p-2 border rounded-lg mr-2"
-        />
-        <select
-          name="category"
-          value={newTask.category}
-          onChange={handleInputChange}
-          className="p-2 border rounded-lg mr-2"
-        >
-          <option value="todo">To-Do</option>
-          <option value="inProgress">In Progress</option>
-          <option value="done">Done</option>
-        </select>
-        <button
-          onClick={handleAddTask}
-          className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          Add Task
-        </button>
-      </div>
+      <AddTaskForm onTaskAdded={handleTaskAdded} />
 
       {/* Task Board */}
       <DragDropContext onDragEnd={handleDragEnd}>

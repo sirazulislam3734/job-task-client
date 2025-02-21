@@ -10,7 +10,8 @@ const PrivateRoute = ({ children }) => {
 
   if (loading) return (<DeadlineLoading></DeadlineLoading>)
   if (user) return children
-  return <Navigate to='/login' state={location.pathname} replace></Navigate>
+  return console.log("Not Login");
+//   <Navigate to='/login' state={location.pathname} replace></Navigate>
 }
 
 export default PrivateRoute
