@@ -8,14 +8,14 @@ const Home = () => {
   const navigate = useNavigate();
   const {user} = useAuth()
 
-  const handleNavigation = () => {
-    const isLoggedIn = localStorage.getItem("access-token"); // Example auth check
-    if (isLoggedIn) {
-      navigate("dashboard");
-    } else {
-      navigate("/login");
-    }
-  };
+//   const handleNavigation = () => {
+//     const isLoggedIn = localStorage.getItem("access-token"); // Example auth check
+//     if (isLoggedIn) {
+//       navigate("/dashboard/addTask");
+//     } else {
+//       navigate("/login");
+//     }
+//   };
 
   return (
     <motion.div
@@ -45,7 +45,7 @@ const Home = () => {
         animate={{ scale: 1 }}
         transition={{ duration: 0.6, delay: 0.5 }}
       >
-        <Link><button className="px-6 py-3 text-lg font-semibold bg-white text-indigo-600 rounded-lg shadow-md hover:bg-gray-200" onClick={handleNavigation}>
+        <Link to={`${user? "/dashboard/addTask": "/login"}`}><button className="px-6 py-3 text-lg font-semibold bg-white text-indigo-600 rounded-lg shadow-md hover:bg-gray-200">
           Get Started
         </button></Link>
       </motion.div>
