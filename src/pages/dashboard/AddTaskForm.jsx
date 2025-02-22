@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AddTaskForm = ({ onTaskAdded }) => {
+    const axiosSecure = useAxiosSecure()
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -29,7 +30,7 @@ const AddTaskForm = ({ onTaskAdded }) => {
 
     try {
       // Save task to the database
-      const res =  await axios.post("http://localhost:5000/tasks", task)
+      const res =  await axiosSecure.post("/tasks", task)
       if(res.data.insertedId){
         Swal.fire({
             title: "success!",

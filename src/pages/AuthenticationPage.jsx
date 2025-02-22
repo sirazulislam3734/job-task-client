@@ -2,8 +2,10 @@ import Swal from "sweetalert2";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const AuthenticationPage = () => {
+  const axiosSecure = useAxiosSecure()
   const { user, setUser, signInGoogle, signOutUser } = useAuth();
   const navigate = useNavigate();
   const handleLogin = async () => {
@@ -14,7 +16,7 @@ const AuthenticationPage = () => {
         name: res.user?.displayName,
         email: res.user?.email,
       };
-      await axios.post("http://localhost:5000/users", userInfo)
+      await axiosSecure.post("/users", userInfo)
       .then(res => {
         console.log(res);
       })

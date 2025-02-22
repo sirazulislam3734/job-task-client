@@ -9,6 +9,7 @@ import {
   import { GoogleAuthProvider } from "firebase/auth";
   import { createContext, useEffect, useState } from "react";
 import auth from "../firebase/firebase.config";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
   export const AuthContext = createContext(null);
   const googleProvider = new GoogleAuthProvider();
@@ -16,7 +17,7 @@ import auth from "../firebase/firebase.config";
   const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-  
+    const axiosSecure = useAxiosSecure()
     const signInGoogle = () => {
       setLoading(true);
       return signInWithPopup(auth, googleProvider);
@@ -39,7 +40,7 @@ import auth from "../firebase/firebase.config";
         setUser(currentUser);
         if (currentUser) {
           const userInfo = { email: currentUser?.email };
-        await axios.post("http://localhost:5000/jwt", userInfo)
+        await axiosSecure.post("/jwt", userInfo)
         .then((res) => {
             if (res.data.token) {
               localStorage.setItem("access-token", res.data.token);

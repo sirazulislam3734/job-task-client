@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import AddTaskForm from "./AddTaskForm"; // Import the AddTaskForm component
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AddTask = () => {
   const [tasks, setTasks] = useState({
@@ -10,7 +11,7 @@ const AddTask = () => {
     inProgress: [],
     done: [],
   });
-
+  const axiosSecure = useAxiosSecure()
   const [activityLog, setActivityLog] = useState([]);
 
   // Fetch tasks from the database on component mount
@@ -20,7 +21,7 @@ const AddTask = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/task");
+      const response = await axiosSecure.get("/task");
       const tasks = response.data;
 
       // Organize tasks by category
@@ -54,7 +55,7 @@ const AddTask = () => {
   const handleDeleteTask = async (taskId, category) => {
     try {
       // Delete task from the database
-      const res = await axios.delete(`http://localhost:5000/deleteTask/${taskId}`);
+      const res = await axiosSecure.delete(`/deleteTask/${taskId}`);
       console.log(res.data, "Delete Data");
       if(res.data.deletedCount > 0){
         Swal.fire({
@@ -96,7 +97,7 @@ const AddTask = () => {
     // If the task is moved to a different category
     if (sourceCategory !== destinationCategory) {
       // Update task category in the database
-      const res = await axios.put(`http://localhost:5000/putTask/${task.id}`, {
+      const res = await axiosSecure.put(`/putTask/${task.id}`, {
         category: destinationCategory,
       });
       console.log(res.data, "Update Data");
