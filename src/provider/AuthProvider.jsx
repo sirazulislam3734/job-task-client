@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
+import axios from "axios";
 import {
     onAuthStateChanged,
     signInWithPopup,
@@ -36,11 +37,25 @@ import auth from "../firebase/firebase.config";
       const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
         console.log("Currently logged user", currentUser);
         setUser(currentUser);
+        if (currentUser) {
+          const userInfo = { email: currentUser?.email };
+        await axios.post("https://backend-gules-alpha.vercel.app/jwt", userInfo)
+        .then((res) => {
+            if (res.data.token) {
+              localStorage.setItem("access-token", res.data.token);
+              setLoading(false);
+            }
+          });
+        }
+        else {
+          localStorage.removeItem("access-token");
+          setLoading(false);
+        }
       });
       return () => {
         unSubscribe();
       };
-    }, []);
+    }, [axios]);
   
     const authInfo = {
       user,
