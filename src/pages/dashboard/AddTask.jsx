@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
-import AddTaskForm from "./AddTaskForm";
- // Import the new AddTaskForm component
+import AddTaskForm from "./AddTaskForm"; // Import the AddTaskForm component
+import Swal from "sweetalert2";
 
 const AddTask = () => {
   const [tasks, setTasks] = useState({
@@ -36,8 +36,7 @@ const AddTask = () => {
     }
   };
 
-
-  // Update local state
+  // Update local state when a new task is added
   const handleTaskAdded = (task) => {
     setTasks((prevTasks) => ({
       ...prevTasks,
@@ -51,20 +50,28 @@ const AddTask = () => {
     ]);
   };
 
+  // Delete a task
   const handleDeleteTask = async (taskId, category) => {
     try {
-        
       // Delete task from the database
-      await axios.delete(`${API_URL}/${taskId}`);
+      const res = await axios.delete(`http://localhost:5000/deleteTask/${taskId}`);
+      console.log(res.data, "Delete Data");
+      if(res.data.deletedCount > 0){
+        Swal.fire({
+            title: "Good job!",
+            text: "Delete successfully!",
+            icon: "success",
+        });
+      }
 
       // Update local state
       setTasks((prevTasks) => ({
         ...prevTasks,
-        [category]: prevTasks[category].filter((task) => task.id !== taskId),
+        [category]: prevTasks[category].filter((task) => task._id !== taskId),
       }));
 
       // Add to activity log
-      const deletedTask = tasks[category].find((task) => task.id === taskId);
+      const deletedTask = tasks[category].find((task) => task._id === taskId);
       setActivityLog((prevLog) => [
         ...prevLog,
         `Task "${deletedTask.title}" deleted from ${category}.`,
@@ -74,6 +81,7 @@ const AddTask = () => {
     }
   };
 
+  // Handle drag-and-drop
   const handleDragEnd = async (result) => {
     const { source, destination } = result;
 
@@ -86,17 +94,17 @@ const AddTask = () => {
 
     // If the task is moved to a different category
     if (sourceCategory !== destinationCategory) {
-
       // Update task category in the database
-      await axios.patch(`http://localhost:5000/patchTask/${task.id}`, {
+      const res = await axios.put(`http://localhost:5000/putTask/${task._id}`, {
         category: destinationCategory,
       });
+      console.log(res.data, "Update Data");
 
       // Update local state
       setTasks((prevTasks) => {
         const newTasks = { ...prevTasks };
         newTasks[sourceCategory] = newTasks[sourceCategory].filter(
-          (t) => t.id !== task.id
+          (t) => t._id !== task._id
         );
         newTasks[destinationCategory].splice(destination.index, 0, {
           ...task,
@@ -186,7 +194,7 @@ const AddTask = () => {
                             </p>
                             <button
                               onClick={() =>
-                                handleDeleteTask(task.id, category)
+                                handleDeleteTask(task._id, category)
                               }
                               className="mt-2 text-red-500 hover:text-red-700"
                             >

@@ -29,8 +29,8 @@ const AddTaskForm = ({ onTaskAdded }) => {
 
     try {
       // Save task to the database
-      const {data} =  await axios.post("http://localhost:5000/tasks", task)
-      if(data.insertedId){
+      const res =  await axios.post("http://localhost:5000/tasks", task)
+      if(res.data.insertedId){
         Swal.fire({
             title: "success!",
             text: "Add Task Successful!",
