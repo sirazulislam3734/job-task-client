@@ -1,13 +1,11 @@
 import Swal from "sweetalert2";
 import useAuth from "../hooks/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AuthenticationPage = () => {
   const { user, setUser, signInGoogle, signOutUser } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location?.state || "/";
   const handleLogin = async () => {
     try {
       const res = await signInGoogle();
@@ -16,7 +14,7 @@ const AuthenticationPage = () => {
         name: res.user?.displayName,
         email: res.user?.email,
       };
-      await axios.post("/users", userInfo)
+      await axios.post("http://localhost:5000/users", userInfo)
       .then(res => {
         console.log(res);
       })
@@ -25,7 +23,7 @@ const AuthenticationPage = () => {
         text: "Sign Up Successful!",
         icon: "success",
       });
-      navigate(from, { replace: true });
+      navigate("dashboard");
     } catch (error) {
       console.error("Login Failed", error);
     }

@@ -45,7 +45,7 @@ const Home = () => {
         animate={{ scale: 1 }}
         transition={{ duration: 0.6, delay: 0.5 }}
       >
-        <Link to={`${user? "dashboard": "/login"}`}><button className="px-6 py-3 text-lg font-semibold bg-white text-indigo-600 rounded-lg shadow-md hover:bg-gray-200" onClick={handleNavigation}>
+        <Link><button className="px-6 py-3 text-lg font-semibold bg-white text-indigo-600 rounded-lg shadow-md hover:bg-gray-200" onClick={handleNavigation}>
           Get Started
         </button></Link>
       </motion.div>

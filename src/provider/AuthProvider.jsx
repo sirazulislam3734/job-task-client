@@ -39,7 +39,7 @@ import auth from "../firebase/firebase.config";
         setUser(currentUser);
         if (currentUser) {
           const userInfo = { email: currentUser?.email };
-        await axios.post("https://backend-gules-alpha.vercel.app/jwt", userInfo)
+        await axios.post("http://localhost:5000/jwt", userInfo)
         .then((res) => {
             if (res.data.token) {
               localStorage.setItem("access-token", res.data.token);

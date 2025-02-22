@@ -20,7 +20,7 @@ const AddTask = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("https://backend-gules-alpha.vercel.app/task");
+      const response = await axios.get("http://localhost:5000/task");
       const tasks = response.data;
 
       // Organize tasks by category
@@ -54,7 +54,7 @@ const AddTask = () => {
   const handleDeleteTask = async (taskId, category) => {
     try {
       // Delete task from the database
-      const res = await axios.delete(`https://backend-gules-alpha.vercel.app/deleteTask/${taskId}`);
+      const res = await axios.delete(`http://localhost:5000/deleteTask/${taskId}`);
       console.log(res.data, "Delete Data");
       if(res.data.deletedCount > 0){
         Swal.fire({
@@ -96,7 +96,7 @@ const AddTask = () => {
     // If the task is moved to a different category
     if (sourceCategory !== destinationCategory) {
       // Update task category in the database
-      const res = await axios.put(`https://backend-gules-alpha.vercel.app/putTask/${task.id}`, {
+      const res = await axios.put(`http://localhost:5000/putTask/${task.id}`, {
         category: destinationCategory,
       });
       console.log(res.data, "Update Data");
