@@ -29,7 +29,7 @@ const AddTaskForm = ({ onTaskAdded }) => {
 
     try {
       // Save task to the database
-      const res =  await axios.post("http://localhost:5000/tasks", task)
+      const res =  await axios.post("https://backend-gules-alpha.vercel.app/tasks", task)
       if(res.data.insertedId){
         Swal.fire({
             title: "success!",
